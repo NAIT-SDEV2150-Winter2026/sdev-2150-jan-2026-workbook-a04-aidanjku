@@ -100,7 +100,7 @@ function renderTaskList(items) {
 }
 
 // TODO: Render the task list inside the list container
-list.innerHTML = renderTaskList(tasks);
+
 
 // --------------------------------------------------
 // STEP 6: DOM manipulation with createElement
@@ -169,13 +169,40 @@ btnAdd.addEventListener("click", () => {
 // 1. Create a function toggleDone(title)
 //    - Find a task by title
 //    - Flip its done value (true/false)
+function toggleDone(title) {
+  for (const task of tasks) {
+    if (task.title === title) {
+      task.done = !task.done;
+      return;
+    }
+  }
+}
 
 // 2. Update renderTaskList() to show '(done)' or '(todo)'
+function renderTaskList(items) {
+  let html = "<ul>";
+  for (const item of items) {
+    const status = item.done ? "done" : "todo";
+    html += `<li class="${status}">${item.title} (${status})</li>`;
+  }
+  html += "</ul>";
+  return html;
+}
+
 
 // 3. Add event delegation to the <ul>
 //    - When a list item is clicked:
 //      * Toggle the task
 //      * Re-render the list
+list.addEventListener("click", (event) => {
+  if (event.target.tagName !== "LI") return;
+
+  const raw = event.target.textContent;
+  const title = raw.replace(/\s*\(done\)|\s*\(todo\)/, "");
+
+  toggleDone(title);
+  list.innerHTML = renderTaskList(tasks);
+});
 
 // 4. Stretch goals:
 //    - Display a chekcbox next to each task to represent done/todo 
